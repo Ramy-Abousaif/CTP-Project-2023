@@ -3,12 +3,6 @@ Shader "Hidden/Atmosphere"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        planetCentre ("Planet Centre", Vector) = (0,0,0,0)
-        atmosphereRadius ("Atmosphere Radius", Float) = 1
-        planetRadius ("Planet Radius", Float) = 1
-        numInScatteringPoints ("Num In Scattering Points", Int) = 10
-        numOpticalDepthPoints ("Num Optical Depth Points", Int) = 10
-        densityFalloff ("Density Falloff", Float) = 1
     }
     SubShader
     {
@@ -37,7 +31,8 @@ Shader "Hidden/Atmosphere"
                 float3 viewVector : TEXCOORD1;
             };
 
-            v2f vert(appdata v) {
+            v2f vert(appdata v) 
+            {
                 v2f output;
                 output.pos = UnityObjectToClipPos(v.vertex);
                 output.uv = v.uv;
@@ -46,49 +41,37 @@ Shader "Hidden/Atmosphere"
                 return output;
             }
 
-            float2 squareUV(float2 uv) {
-                float width = _ScreenParams.x;
-                float height = _ScreenParams.y;
-                //float minDim = min(width, height);
-                float scale = 1000;
-                float x = uv.x * width;
-                float y = uv.y * height;
-                return float2 (x / scale, y / scale);
-            }
-
             sampler2D _MainTex;
             sampler2D _CameraDepthTexture;
-            sampler2D _BlueNoise;
-            sampler2D _BakedOpticalDepth;
 
-            float4 params;
-
+            // Fed in data
             float3 dirToSun;
             float3 planetCentre;
             float atmosphereRadius;
             float planetRadius;
 
+            // Exposed properties
             int numInScatteringPoints;
             int numOpticalDepthPoints;
-            float intensity;
             float4 scatteringCoefficients;
-            float ditherStrength;
-            float ditherScale;
             float densityFalloff;
 
-            float densityAtPoint(float3 densitySamplePoint) {
+            float densityAtPoint(float3 densitySamplePoint) 
+            {
                 float heightAboveSurface = length(densitySamplePoint - planetCentre) - planetRadius;
                 float height01 = heightAboveSurface / (atmosphereRadius - planetRadius);
                 float localDensity = exp(-height01 * densityFalloff) * (1 - height01);
                 return localDensity;
             }
 
-            float opticalDepth(float3 rayOrigin, float3 rayDir, float rayLength) {
+            float opticalDepth(float3 rayOrigin, float3 rayDir, float rayLength) 
+            {
                 float3 densitySamplePoint = rayOrigin;
                 float stepSize = rayLength / (numOpticalDepthPoints - 1);
                 float opticalDepth = 0;
 
-                for (int i = 0; i < numOpticalDepthPoints; i++) {
+                for (int i = 0; i < numOpticalDepthPoints; i++) 
+                {
                     float localDensity = densityAtPoint(densitySamplePoint);
                     opticalDepth += localDensity * stepSize;
                     densitySamplePoint += rayDir * stepSize;
@@ -96,13 +79,15 @@ Shader "Hidden/Atmosphere"
                 return opticalDepth;
             }
 
-            float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength) {
+            float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength) 
+            {
                 float3 inScatterPoint = rayOrigin;
                 float stepSize = rayLength / (numInScatteringPoints - 1);
                 float3 inScatteredLight = 0;
       
 
-                for (int i = 0; i < numInScatteringPoints; i++) {
+                for (int i = 0; i < numInScatteringPoints; i++) 
+                {
                     float sunRayLength = raySphere(planetCentre, atmosphereRadius, inScatterPoint, dirToSun).y;
                     float sunRayOpticalDepth = opticalDepth(inScatterPoint, dirToSun, sunRayLength);
                     float viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
@@ -129,8 +114,9 @@ Shader "Hidden/Atmosphere"
                 float dstThroughAtmosphere = min(hitInfo.y, sceneDepth - dstToAtmosphere);
 
                 if (dstThroughAtmosphere > 0) {
-                    float3 pointInAtmosphere = rayOrigin + rayDir * dstToAtmosphere;
-                    float light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere);
+                    const float epsilon = 0.0001;
+                    float3 pointInAtmosphere = rayOrigin + rayDir * (dstToAtmosphere + epsilon);
+                    float light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere - epsilon * 2);
                     return originalCol * (1 - light) + light;
                 }
 

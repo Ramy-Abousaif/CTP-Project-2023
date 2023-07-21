@@ -10,12 +10,16 @@ public class Planet : MonoBehaviour
 
     public ShapeSettings shapeSettings;
     public ColourSettings colourSettings;
+    public AtmosphereSettings atmosphereSettings;
 
     [HideInInspector]
     public bool shapeSettingsFoldout;
 
     [HideInInspector]
     public bool colourSettingsFoldout;
+
+    [HideInInspector]
+    public bool atmosphereSettingsFoldout;
 
     ShapeGenerator shapeGenerator;
 
@@ -85,11 +89,25 @@ public class Planet : MonoBehaviour
         }
     }
 
+    public void OnAtmosphereSettingsChange()
+    {
+        if (autoUpdate)
+        {
+            Initialize();
+            GenerateAtmosphere();
+        }
+    }
+
     private void GenerateColours()
     {
         foreach (var m in meshFilters)
         {
             m.GetComponent<MeshRenderer>().sharedMaterial.color = colourSettings.planetColour;
         }
+    }
+
+    private void GenerateAtmosphere()
+    {
+
     }
 }
