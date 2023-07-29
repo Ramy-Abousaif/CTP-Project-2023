@@ -47,9 +47,11 @@ Shader "Custom/Planet"
 
             float yes = invLerp(_ElevationMinMax.x, _ElevationMinMax.y, distance);
 
+            float2 myVector = float2(yes, IN.uv_MainTex.x);
+
             // Manually calculate the UV coordinates for sampling the gradient texture
             // The gradient texture is sampled horizontally, so the U coordinate is 't', and the V coordinate is 0.5 (or any fixed value in [0, 1])
-            fixed2 gradientUV = fixed2(yes, 0.5);
+            fixed2 gradientUV = myVector;
 
             // Sample the color from the gradient texture using the calculated UV coordinates
             fixed3 gradientColor = tex2D(_MainTex, gradientUV).rgb;

@@ -29,6 +29,7 @@ public class FaceMesh
         Vector3[] vertices = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;
+        Vector2[] uv = mesh.uv;
 
         for (int i = 0; i < resolution; i++)
         {
@@ -57,5 +58,28 @@ public class FaceMesh
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
+
+        if(mesh.uv.Length == uv.Length)
+            mesh.uv = uv;
+    }
+
+    public void UpdateUVs(ColourGenerator colourGenerator)
+    {
+        Vector2[] uv = new Vector2[resolution * resolution];
+
+        for (int i = 0; i < resolution; i++)
+        {
+            for (int j = 0; j < resolution; j++)
+            {
+                int index = i + j * resolution;
+                Vector2 percent = new Vector2(i, j) / (resolution - 1);
+                Vector3 pointOnUnitCube = localUp + (percent.x - 0.5f) * 2 * axisA + (percent.y - 0.5f) * 2 * axisB;
+                Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
+
+                uv[index] = new Vector2(colourGenerator.BiomePercentFromPoint(pointOnUnitSphere), 0);
+            }
+        }
+
+        mesh.uv = uv;
     }
 }

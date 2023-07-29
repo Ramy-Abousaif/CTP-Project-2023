@@ -76,8 +76,8 @@ public class OrbitDebugDisplay : MonoBehaviour
         {
             Color pathColour = Color.white;
 
-            if(bodies[bodyIndex].gameObject.GetComponent<Planet>() != null)
-                pathColour = bodies[bodyIndex].gameObject.GetComponent<Planet>().colourSettings.gradient.Evaluate(0);
+            //if(bodies[bodyIndex].gameObject.GetComponent<Planet>() != null)
+                //pathColour = bodies[bodyIndex].gameObject.GetComponent<Planet>().colourSettings.gradient.Evaluate(0);
 
             if (useThickLines)
             {

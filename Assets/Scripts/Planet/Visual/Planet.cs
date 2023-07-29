@@ -119,6 +119,10 @@ public class Planet : MonoBehaviour
     private void GenerateColours()
     {
         colourGenerator.UpdateColours();
+        foreach (var face in faces)
+        {
+            face.UpdateUVs(colourGenerator);
+        }
     }
 
     private void GenerateAtmosphere()
