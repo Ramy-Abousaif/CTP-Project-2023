@@ -37,7 +37,7 @@ public class GravitationalBody : MonoBehaviour
         if (type == CelestialType.STAR)
             return;
 
-        currentRotationAngle += CalculateRotationalPeriod() * Time.deltaTime;
+        currentRotationAngle += CalculateRotationalVelocity() * Time.deltaTime;
 
         // Apply the rotation using the northPole vector as the axis and currentRotationAngle in radians
         transform.rotation = Quaternion.AngleAxis(currentRotationAngle, northPole);
@@ -68,9 +68,11 @@ public class GravitationalBody : MonoBehaviour
         rb.MovePosition(rb.position + velocity * timeStep);
     }
 
-    private float CalculateRotationalPeriod()
+
+    // Calculate the rotational period of the planet in seconds
+    public float GetRotationalPeriod()
     {
-        return 360 / CalculateRotationalVelocity();
+        return CalculateRotationalVelocity() / 360f;
     }
 
     private float CalculateRotationalVelocity()
