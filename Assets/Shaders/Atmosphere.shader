@@ -79,25 +79,26 @@ Shader "Hidden/Atmosphere"
                 return opticalDepth;
             }
 
-            float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength) 
+            float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength, float3 originalCol) 
             {
                 float3 inScatterPoint = rayOrigin;
                 float stepSize = rayLength / (numInScatteringPoints - 1);
                 float3 inScatteredLight = 0;
-      
+                float viewRayOpticalDepth = 0;
 
                 for (int i = 0; i < numInScatteringPoints; i++) 
                 {
                     float sunRayLength = raySphere(planetCentre, atmosphereRadius, inScatterPoint, dirToSun).y;
                     float sunRayOpticalDepth = opticalDepth(inScatterPoint, dirToSun, sunRayLength);
-                    float viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
-                    float3 transmittance = exp(-(sunRayOpticalDepth + viewRayOpticalDepth));
+                    viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
+                    float3 transmittance = exp(-(sunRayOpticalDepth + viewRayOpticalDepth) * scatteringCoefficients);
                     float localDensity = densityAtPoint(inScatterPoint);
 
-                    inScatteredLight += localDensity * transmittance * stepSize;
+                    inScatteredLight += localDensity * transmittance * scatteringCoefficients * stepSize;
                     inScatterPoint += rayDir * stepSize;
                 }
-                return inScatteredLight;
+                float originalColTransmittance = exp(-viewRayOpticalDepth);
+                return originalCol * originalColTransmittance + inScatteredLight;
             }
 
             fixed4 frag (v2f i) : SV_Target
@@ -116,8 +117,8 @@ Shader "Hidden/Atmosphere"
                 if (dstThroughAtmosphere > 0) {
                     const float epsilon = 0.0001;
                     float3 pointInAtmosphere = rayOrigin + rayDir * (dstToAtmosphere + epsilon);
-                    float light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere - epsilon * 2);
-                    return originalCol * (1 - light) + light;
+                    float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere - epsilon * 2, originalCol);
+                    return float4(light, 0);
                 }
 
                 return originalCol;

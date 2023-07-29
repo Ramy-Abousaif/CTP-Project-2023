@@ -50,6 +50,10 @@ float Blend(float startHeight, float blendDst, float height)
     return smoothstep(startHeight - blendDst / 2, startHeight + blendDst / 2, height);
 }
 
+float invLerp(float from, float to, float value)
+{
+    return (value - from) / (to - from);
+}
 
 	// Returns vector (dstToSphere, dstThroughSphere)
 	// If ray origin is inside sphere, dstToSphere = 0

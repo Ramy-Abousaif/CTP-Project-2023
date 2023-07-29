@@ -15,6 +15,8 @@ public class AtmosphereSettings : ScriptableObject
     public float density = 0.25f;
     public int opticalDepthPoints = 10;
     public int inScatteringPoints = 10;
+    public Vector3 wavelengths = new Vector3(680, 550, 440);
+    public float scatterStrength = 1f;
 
     void OnValidate()
     {
@@ -27,9 +29,14 @@ public class AtmosphereSettings : ScriptableObject
         {
             float atmosphereRadius = (1 + scale) * _planetRadius;
 
+            float scatterR = Mathf.Pow(400 / wavelengths.x, 4) * scatterStrength;
+            float scatterG = Mathf.Pow(400 / wavelengths.y, 4) * scatterStrength;
+            float scatterB = Mathf.Pow(400 / wavelengths.z, 4) * scatterStrength;
+
             mat.SetInt("numInScatteringPoints", inScatteringPoints);
             mat.SetInt("numOpticalDepthPoints", opticalDepthPoints);
             mat.SetFloat("atmosphereRadius", atmosphereRadius);
+            mat.SetVector("scatteringCoefficients", new Vector3(scatterR, scatterG, scatterB));
             mat.SetFloat("planetRadius", _planetRadius);
             mat.SetFloat("densityFalloff", density);
 
