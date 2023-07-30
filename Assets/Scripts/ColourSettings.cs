@@ -7,10 +7,15 @@ using UnityEngine;
 public class ColourSettings : ScriptableObject
 {
     public Shader shader;
-    [HideInInspector]
+    // OPTIONAL: Can be assigned manually to essentially have a material instance in the editor
     public Material planetMat;
     public BiomeColourSettings biomeColourSettings;
     public Gradient oceanColour;
+    public Texture2D oceanMap;
+    public Vector2 oceanMapTiling;
+    public float waveSpeed;
+    public float oceanStrength;
+    public float oceanSmoothness;
 
     [System.Serializable]
     public class BiomeColourSettings

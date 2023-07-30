@@ -163,3 +163,8 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
+  oceanMap: {fileID: 2800000, guid: 8d17f986ca59986439d7e381c5714a9f, type: 3}
+  oceanMapTiling: {x: 44, y: 44}
+  waveSpeed: 0.05
+  oceanStrength: 1
+  oceanSmoothness: 0.907

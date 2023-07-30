@@ -22,6 +22,7 @@ public class ColourGenerator
             texture = new Texture2D(textureResolution * 2, colourSettings.biomeColourSettings.biomes.Length, TextureFormat.RGBA32, false);
             texture.wrapMode = TextureWrapMode.Clamp;
         }
+
         biomeNoiseFilter = NoiseFilterFactory.CreateNoiseFilter(colourSettings.biomeColourSettings.noiseSettings);
     }
 
@@ -75,6 +76,17 @@ public class ColourGenerator
         }
         texture.SetPixels(colours);
         texture.Apply();
+
         colourSettings.planetMat.SetTexture("_MainTex", texture);
+
+        if (colourSettings.oceanMap != null)
+            colourSettings.planetMat.SetTexture("_OceanNormalMap", colourSettings.oceanMap);
+        else
+            colourSettings.planetMat.SetTexture("_OceanNormalMap", new Texture2D(512, 512, TextureFormat.RGBA32, true));
+
+        colourSettings.planetMat.SetFloat("_OceanSmoothness", colourSettings.oceanSmoothness);
+        colourSettings.planetMat.SetFloat("_OceanNormalStrength", colourSettings.oceanStrength);
+        colourSettings.planetMat.SetFloat("_OceanScrollSpeed", colourSettings.waveSpeed);
+        colourSettings.planetMat.SetTextureScale("_OceanNormalMap", colourSettings.oceanMapTiling);
     }
 }
