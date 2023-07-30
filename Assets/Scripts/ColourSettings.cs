@@ -8,11 +8,13 @@ public class ColourSettings : ScriptableObject
 {
     public Shader shader;
     // OPTIONAL: Can be assigned manually to essentially have a material instance in the editor
+    public bool exposeMat = false;
+    [ConditionalHide("exposeMat", 1)]
     public Material planetMat;
     public BiomeColourSettings biomeColourSettings;
     public Gradient oceanColour;
     public Texture2D oceanMap;
-    public Vector2 oceanMapTiling;
+    public Vector2 oceanMapTiling = new Vector2(1, 1);
     public float waveSpeed;
     public float oceanStrength;
     public float oceanSmoothness;
