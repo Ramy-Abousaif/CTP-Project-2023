@@ -10,7 +10,8 @@ Shader "Custom/Planet"
         Tags { "RenderType" = "Opaque" }
 
         CGPROGRAM
-        #pragma surface surf Lambert vertex:vert
+        #pragma surface surf Standard vertex:vert
+        #pragma target 4.0
 
         #include "/Includes/Math.cginc"
 
@@ -21,6 +22,7 @@ Shader "Custom/Planet"
         {
             float2 uv_MainTex;
             float3 localPos; // Vertex position in object space
+            float3 normal : NORMAL;
         };
 
         void vert(inout appdata_full v, out Input o)
@@ -37,17 +39,30 @@ Shader "Custom/Planet"
             o.localPos.xyz *= t;
         }
 
-        void surf(Input IN, inout SurfaceOutput o)
+        void surf(Input IN, inout SurfaceOutputStandard o)
         {
             // Sample the texture using the UV coordinates from the main texture
             fixed4 texColor = tex2D(_MainTex, IN.uv_MainTex);
 
-            // Calculate the distance from the object's center using the interpolated vertex position
-            float distance = length(IN.localPos);
+            float yes = invLerp(_ElevationMinMax.x, 0, IN.uv_MainTex.y);
 
-            float yes = invLerp(_ElevationMinMax.x, _ElevationMinMax.y, distance);
+            float no = invLerp(0, _ElevationMinMax.y, IN.uv_MainTex.y);
 
-            float2 myVector = float2(yes, IN.uv_MainTex.x);
+            float yes2 = lerp(0, 0.5, yes);
+
+            float no2 = lerp(0.5, 1, no);
+
+            float yes3 = floor(yes);
+
+            float slightlyAgreed = yes3 * no2;
+
+            float maybe = 1 - yes3;
+
+            float idk = yes2 * maybe;
+
+            float agreed = idk + slightlyAgreed;
+
+            float2 myVector = float2(agreed, IN.uv_MainTex.x);
 
             // Manually calculate the UV coordinates for sampling the gradient texture
             // The gradient texture is sampled horizontally, so the U coordinate is 't', and the V coordinate is 0.5 (or any fixed value in [0, 1])
@@ -59,6 +74,9 @@ Shader "Custom/Planet"
             // Apply the color from the gradient texture
             o.Albedo = gradientColor;
             o.Alpha = texColor.a;
+
+            // Zero for now as it doesn't look good
+            o.Smoothness = maybe * 0;
         }
 
         ENDCG
