@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: T1Atmosphere
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: 257ed6311f6a5f94cba4d75798730391, type: 3}
-  scale: 0.297
-  density: 6
+  scale: 0.26
+  density: 11.13
   opticalDepthPoints: 10
   inScatteringPoints: 10
   wavelengths: {x: 700, y: 530, z: 460}
-  scatterStrength: 12
+  scatterStrength: 11.72
