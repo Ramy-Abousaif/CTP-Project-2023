@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f90b4039fccc9341811b4d8bb02eec9, type: 3}
+  m_Name: T2Shape
+  m_EditorClassIdentifier: 
+  planetRadius: 0.04
+  noiseLayers:
+  - enabled: 1
+    useFirstLayerAsMask: 0
+    noiseSettings:
+      filterType: 0
+      simpleNoiseSettings:
+        strength: 0.05
+        layers: 4
+        baseRoughness: 3.48
+        roughness: 7.69
+        persistence: 0.21
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0.5
+      rigidNoiseSettings:
+        strength: 1
+        layers: 1
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+        weightMultiplier: 0.8
+  - enabled: 1
+    useFirstLayerAsMask: 1
+    noiseSettings:
+      filterType: 1
+      simpleNoiseSettings:
+        strength: 1
+        layers: 1
+        baseRoughness: 1
+        roughness: 2
+        persistence: 0.5
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0
+      rigidNoiseSettings:
+        strength: 1.14
+        layers: 2
+        baseRoughness: 3.38
+        roughness: 2.44
+        persistence: 0.44
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0.61
+        weightMultiplier: 5.91

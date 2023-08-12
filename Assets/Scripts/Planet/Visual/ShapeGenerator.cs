@@ -21,14 +21,15 @@ public class ShapeGenerator
 
     public float CalculateUnscaledElevation(Vector3 pointOnUnitSphere)
     {
+        float output = 0;
         float firstLayerVal = 0;
-        float elevation = 0;
 
         if(noiseFilters.Length > 0) 
         {
             firstLayerVal = noiseFilters[0].Evaluate(pointOnUnitSphere);
+
             if (shapeSettings.noiseLayers[0].enabled)
-                elevation = firstLayerVal;
+                output = firstLayerVal;
         }
 
         for (int i = 1; i < noiseFilters.Length; i++)
@@ -36,11 +37,11 @@ public class ShapeGenerator
             if (shapeSettings.noiseLayers[i].enabled)
             {
                 float mask = (shapeSettings.noiseLayers[i].useFirstLayerAsMask) ? firstLayerVal : 1;
-                elevation += noiseFilters[i].Evaluate(pointOnUnitSphere) * mask;
+                output += noiseFilters[i].Evaluate(pointOnUnitSphere) * mask;
             }
         }
-        elevationMinMax.AddValue(elevation);
-        return  elevation;
+        elevationMinMax.AddValue(output);
+        return  output;
     }
 
     public float GetScaledElevation(float unscaledElevation)

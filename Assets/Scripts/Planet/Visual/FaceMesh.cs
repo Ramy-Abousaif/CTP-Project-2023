@@ -36,8 +36,8 @@ public class FaceMesh
             for (int j = 0; j < resolution; j++)
             {
                 int index = i + j * resolution;
-                Vector2 percent = new Vector2(i, j) / (resolution - 1);
-                Vector3 pointOnUnitCube = localUp + (percent.x - 0.5f) * 2 * axisA + (percent.y - 0.5f) * 2 * axisB;
+                Vector2 fractionalProgress = new Vector2(i, j) / (resolution - 1);
+                Vector3 pointOnUnitCube = localUp + (fractionalProgress.x - 0.5f) * 2 * axisA + (fractionalProgress.y - 0.5f) * 2 * axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
                 float unscaledElevation = shapeGenerator.CalculateUnscaledElevation(pointOnUnitSphere);
                 vertices[index] = pointOnUnitSphere * shapeGenerator.GetScaledElevation(unscaledElevation);
@@ -76,7 +76,7 @@ public class FaceMesh
                 Vector3 pointOnUnitCube = localUp + (percent.x - 0.5f) * 2 * axisA + (percent.y - 0.5f) * 2 * axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
 
-                uv[index].x = colourGenerator.BiomePercentFromPoint(pointOnUnitSphere);
+                uv[index].x = colourGenerator.LatitudinalZoneProgressFromPoint(pointOnUnitSphere);
             }
         }
 

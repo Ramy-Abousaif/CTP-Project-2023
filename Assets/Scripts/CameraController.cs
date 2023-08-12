@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private float speedMultiplier = 1f;
     public float movementSpeed = 5f;
     public float rotationSpeed = 5f;
     public Transform target;
@@ -13,6 +14,7 @@ public class CameraController : MonoBehaviour
     private float rotationX = 0f;
     private float rotationY = 0f;
     private bool isRightClicking = false;
+    private float radius = 0f;
     private float distanceToTarget = 5f;
     private float minDistanceToTarget = 2f;
     private float maxDistanceToTarget = 20f;
@@ -22,6 +24,11 @@ public class CameraController : MonoBehaviour
         // Check if right mouse button is held down
         isRightClicking = Input.GetMouseButton(1);
 
+        if (Input.GetKey(KeyCode.LeftShift))
+            speedMultiplier = 2f;
+        else
+            speedMultiplier = 1f;
+
         // Camera rotation based on right-click
         if (isRightClicking)
         {
@@ -30,7 +37,7 @@ public class CameraController : MonoBehaviour
             rotationX += Input.GetAxis("Mouse X") * rotationSpeed;
             rotationY -= Input.GetAxis("Mouse Y") * rotationSpeed;
             rotationY = Mathf.Clamp(rotationY, -90f, 90f);
-            transform.rotation = Quaternion.Euler(rotationY, rotationX, 0f);
+            transform.localRotation = Quaternion.Euler(rotationY, rotationX, 0f);
         }
         else
         {
@@ -58,7 +65,7 @@ public class CameraController : MonoBehaviour
             else
             {
                 distanceToTarget -= Input.GetAxis("Mouse ScrollWheel") * movementSpeed;
-                distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget, maxDistanceToTarget);
+                distanceToTarget = Mathf.Clamp(distanceToTarget, minDistanceToTarget + radius, maxDistanceToTarget + radius);
 
                 Vector3 focusPosition = target.position;
                 Vector3 dirToCamera = Quaternion.Euler(rotationY, rotationX, 0f) * Vector3.back;
@@ -69,7 +76,7 @@ public class CameraController : MonoBehaviour
         else
         {
             Vector3 moveDirection = transform.forward * vertical + transform.right * horizontal;
-            transform.position += moveDirection * movementSpeed * Time.deltaTime;
+            transform.position += moveDirection * movementSpeed * Time.deltaTime * speedMultiplier;
         }
     }
 
@@ -84,6 +91,8 @@ public class CameraController : MonoBehaviour
                 // Focus on the clicked object
                 target = hit.transform;
                 isOrbiting = true;
+                radius = hit.transform.GetComponent<GravitationalBody>().radius;
+                distanceToTarget = radius + minDistanceToTarget;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }

@@ -8,7 +8,7 @@ public class ColourGenerator
     ColourSettings colourSettings;
     Texture2D texture;
     const int textureResolution = 50;
-    INoiseFilter biomeNoiseFilter;
+    INoiseFilter zoneNoiseFilter;
 
     public void UpdateColourSettings(ColourSettings colourSettings)
     {
@@ -17,13 +17,13 @@ public class ColourGenerator
         if(colourSettings.planetMat == null)
             colourSettings.planetMat = new Material(colourSettings.shader);
 
-        if (texture == null || texture.height != colourSettings.biomeColourSettings.biomes.Length)
+        if (texture == null || texture.height != colourSettings.zoneColourSettings.zones.Length)
         {
-            texture = new Texture2D(textureResolution * 2, colourSettings.biomeColourSettings.biomes.Length, TextureFormat.RGBA32, false);
+            texture = new Texture2D(textureResolution * 2, colourSettings.zoneColourSettings.zones.Length, TextureFormat.RGBA32, false);
             texture.wrapMode = TextureWrapMode.Clamp;
         }
 
-        biomeNoiseFilter = NoiseFilterFactory.CreateNoiseFilter(colourSettings.biomeColourSettings.noiseSettings);
+        zoneNoiseFilter = NoiseFilterFactory.CreateNoiseFilter(colourSettings.zoneColourSettings.noiseSettings);
     }
 
     public void UpdateElevation(MinMax elevationMinMax)
@@ -33,44 +33,40 @@ public class ColourGenerator
         //Debug.Log("Data being fed into shader: " + colourSettings.planetMat.GetVector("_ElevationMinMax"));
     }
 
-    public float BiomePercentFromPoint(Vector3 pointOnUnitSphere)
+    public float LatitudinalZoneProgressFromPoint(Vector3 pointOnUnitSphere)
     {
-        float heightPercent = (pointOnUnitSphere.y + 1) / 2f;
-        heightPercent += (biomeNoiseFilter.Evaluate(pointOnUnitSphere) - colourSettings.biomeColourSettings.noiseOffset) * colourSettings.biomeColourSettings.noiseScale;
-        float biomeIndex = 0;
-        int numBiomes = colourSettings.biomeColourSettings.biomes.Length;
-        float blendRange = colourSettings.biomeColourSettings.blend / 2f + 0.001f;
+        float blendRange = colourSettings.zoneColourSettings.blend / 2f + 0.001f;
+        float heightProgress = (pointOnUnitSphere.y + 1) / 2f;
+        heightProgress += (zoneNoiseFilter.Evaluate(pointOnUnitSphere) - colourSettings.zoneColourSettings.noiseOffset) * colourSettings.zoneColourSettings.noiseScale;
+        float zoneIndex = 0;
+        int numZones = colourSettings.zoneColourSettings.zones.Length;
 
-        for (int i = 0; i < numBiomes; i++)
+        for (int i = 0; i < numZones; i++)
         {
-            float dst = heightPercent - colourSettings.biomeColourSettings.biomes[i].startHeight;
-            float weight = Mathf.InverseLerp(-blendRange, blendRange, dst);
-            biomeIndex *= (1 - weight);
-            biomeIndex += i * weight;
+            float distance = heightProgress - colourSettings.zoneColourSettings.zones[i].startPos;
+            float weight = Mathf.InverseLerp(-blendRange, blendRange, distance);
+            zoneIndex *= (1 - weight);
+            zoneIndex += i * weight;
         }
 
-        return biomeIndex / Mathf.Max(1, numBiomes - 1);
+        return zoneIndex / Mathf.Max(1, numZones - 1);
     }
 
     public void UpdateColours()
     {
         Color[] colours = new Color[texture.width * texture.height];
         int index = 0;
-        foreach (var biome in colourSettings.biomeColourSettings.biomes)
+        foreach (var zone in colourSettings.zoneColourSettings.zones)
         {
             for (int i = 0; i < textureResolution * 2; i++)
             {
                 Color gradientColour;
                 if(i < textureResolution)
-                {
                     gradientColour = colourSettings.oceanColour.Evaluate(i / (textureResolution - 1f));
-                }
                 else
-                {
-                    gradientColour = biome.gradient.Evaluate((i - textureResolution) / (textureResolution - 1f));
-                }
-                Color tintColour = biome.tint;
-                colours[index] = gradientColour * (1 - biome.tintPercent) + tintColour * biome.tintPercent;
+                    gradientColour = zone.gradient.Evaluate((i - textureResolution) / (textureResolution - 1f));
+
+                colours[index] = gradientColour;
                 index++;
             }
         }

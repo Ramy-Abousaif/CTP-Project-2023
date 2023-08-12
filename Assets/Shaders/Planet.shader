@@ -73,32 +73,22 @@ Shader "Custom/Planet"
             // Sample the ocean normal map using the scrolled UV coordinates and adjust the strength
             float3 oceanNormal = UnpackNormal(tex2D(_OceanNormalMap, scrolledOceanUV)).rgb * _OceanNormalStrength;
 
-            float yes = invLerp(_ElevationMinMax.x, 0, IN.uv_MainTex.y);
+            float deepOceanMask = invLerp(_ElevationMinMax.x, 0, IN.uv_MainTex.y);
+            float shoreToPeakMask = invLerp(0, _ElevationMinMax.y, IN.uv_MainTex.y);
+            float oceanGradient = lerp(0, 0.5, deepOceanMask);
+            float landGradient = lerp(0.5, 1, shoreToPeakMask);
+            float landMask = floor(deepOceanMask);
+            float u_land = landMask * landGradient;
+            float oceanMask = 1 - landMask;
+            float u_ocean = oceanGradient * oceanMask;
+            float u_output = u_ocean + u_land;
 
-            float no = invLerp(0, _ElevationMinMax.y, IN.uv_MainTex.y);
-
-            float yes2 = lerp(0, 0.5, yes);
-
-            float no2 = lerp(0.5, 1, no);
-
-            float yes3 = floor(yes);
-
-            float slightlyAgreed = yes3 * no2;
-
-            float maybe = 1 - yes3;
-
-            float idk = yes2 * maybe;
-
-            float agreed = idk + slightlyAgreed;
-
-            float2 myVector = float2(agreed, IN.uv_MainTex.x);
-
-            // Blend the normals based on 'maybe' - only apply the ocean normal to the ocean surface
-            float3 finalNormal = lerp(landNormal, oceanNormal, maybe);
+            // Blend the normals based on 'oceanMask' - only apply the ocean normal to the ocean surface
+            float3 finalNormal = lerp(landNormal, oceanNormal, oceanMask);
 
             // Manually calculate the UV coordinates for sampling the gradient texture
             // The gradient texture is sampled horizontally, so the U coordinate is 't', and the V coordinate is 0.5 (or any fixed value in [0, 1])
-            fixed2 gradientUV = myVector;
+            fixed2 gradientUV = float2(u_output, IN.uv_MainTex.x);
 
             // Sample the color from the gradient texture using the calculated UV coordinates
             fixed3 gradientColor = tex2D(_MainTex, gradientUV).rgb;
@@ -109,7 +99,7 @@ Shader "Custom/Planet"
             o.Normal = finalNormal;
 
             // Calculate the smoothness and apply it to the material
-            o.Smoothness = maybe * _OceanSmoothness;
+            o.Smoothness = oceanMask * _OceanSmoothness;
         }
 
         ENDCG

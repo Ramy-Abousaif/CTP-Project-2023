@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1a903f5e9e5b884baf5bded752a4998, type: 3}
-  m_Name: T2Colour
+  m_Name: T4Colour
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: ffefeccd26bf24542b96969dfb0b3d9e, type: 3}
+  exposeMat: 0
   planetMat: {fileID: 0}
-  biomeColourSettings:
-    biomes:
+  zoneColourSettings:
+    zones:
     - gradient:
         serializedVersion: 2
-        key0: {r: 0, g: 0, b: 0, a: 0}
-        key1: {r: 0, g: 0, b: 0, a: 0}
+        key0: {r: 0.8867924, g: 0.8867924, b: 0.8867924, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -45,9 +46,7 @@ MonoBehaviour:
         m_Mode: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      tint: {r: 1, g: 1, b: 1, a: 0}
-      startHeight: 0
-      tintPercent: 1
+      startPos: 0
     noiseSettings:
       filterType: 0
       simpleNoiseSettings:
@@ -72,7 +71,7 @@ MonoBehaviour:
     blend: 0
   oceanColour:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
@@ -99,3 +98,8 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  oceanMap: {fileID: 0}
+  oceanMapTiling: {x: 1, y: 1}
+  waveSpeed: 0
+  oceanStrength: 1
+  oceanSmoothness: 0

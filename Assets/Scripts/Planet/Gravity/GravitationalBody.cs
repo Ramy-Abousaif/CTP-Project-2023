@@ -10,12 +10,11 @@ public class GravitationalBody : MonoBehaviour
     public float surfaceGravity;
     public Vector3 initialVelocity;
     public float initialAngularMomentum;
-    public string bodyName = "Unnamed";
-    Transform meshHolder;
 
     public Vector3 velocity { get; private set; }
     public float mass { get; private set; }
-    Rigidbody rb;
+    [HideInInspector]
+    public Rigidbody rb;
 
     public Vector3 northPole = Vector3.up;
 
@@ -37,35 +36,20 @@ public class GravitationalBody : MonoBehaviour
         if (type == CelestialType.STAR)
             return;
 
-        currentRotationAngle += CalculateRotationalVelocity() * Time.deltaTime;
+        currentRotationAngle += CalculateRotationalVelocity() * Time.deltaTime * GravitySimManager.instance.myTimeScale;
 
         // Apply the rotation using the northPole vector as the axis and currentRotationAngle in radians
         transform.rotation = Quaternion.AngleAxis(currentRotationAngle, northPole);
     }
 
-    public void UpdateVelocity(GravitationalBody[] allBodies, float timeStep)
+    public void UpdatePos(float _timeStep)
     {
-        foreach (var otherBody in allBodies)
-        {
-            if (otherBody != this)
-            {
-                float sqrDst = (otherBody.rb.position - rb.position).sqrMagnitude;
-                Vector3 forceDir = (otherBody.rb.position - rb.position).normalized;
-
-                Vector3 acceleration = forceDir * 0.0001f * otherBody.mass / sqrDst;
-                velocity += acceleration * timeStep;
-            }
-        }
+        rb.MovePosition(rb.position + velocity * _timeStep * GravitySimManager.instance.myTimeScale);
     }
 
-    public void UpdateVelocity(Vector3 acceleration, float timeStep)
+    public void UpdateVel(Vector3 _accel, float _timeStep)
     {
-        velocity += acceleration * timeStep;
-    }
-
-    public void UpdatePosition(float timeStep)
-    {
-        rb.MovePosition(rb.position + velocity * timeStep);
+        velocity += _timeStep * GravitySimManager.instance.myTimeScale * _accel;
     }
 
 
@@ -91,22 +75,19 @@ public class GravitationalBody : MonoBehaviour
     void OnValidate()
     {
         mass = surfaceGravity * radius * radius / 0.0001f;
-        gameObject.name = bodyName;
     }
+}
 
-    public Rigidbody Rigidbody
-    {
-        get
-        {
-            return rb;
-        }
-    }
+class GravitationalBodyContainer
+{
+    public float mass;
+    public Vector3 pos;
+    public Vector3 velocity;
 
-    public Vector3 Position
+    public GravitationalBodyContainer(GravitationalBody body)
     {
-        get
-        {
-            return rb.position;
-        }
+        mass = body.mass;
+        pos = body.transform.position;
+        velocity = body.initialVelocity;
     }
 }

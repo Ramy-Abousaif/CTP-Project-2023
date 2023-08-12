@@ -11,7 +11,7 @@ public class ColourSettings : ScriptableObject
     public bool exposeMat = false;
     [ConditionalHide("exposeMat", 1)]
     public Material planetMat;
-    public BiomeColourSettings biomeColourSettings;
+    public ZoneColourSettings zoneColourSettings;
     public Gradient oceanColour;
     public Texture2D oceanMap;
     public Vector2 oceanMapTiling = new Vector2(1, 1);
@@ -20,9 +20,9 @@ public class ColourSettings : ScriptableObject
     public float oceanSmoothness;
 
     [System.Serializable]
-    public class BiomeColourSettings
+    public class ZoneColourSettings
     {
-        public Biome[] biomes;
+        public Zone[] zones;
         public NoiseSettings noiseSettings;
         public float noiseOffset;
         public float noiseScale;
@@ -30,14 +30,11 @@ public class ColourSettings : ScriptableObject
         public float blend;
 
         [System.Serializable]
-        public class Biome
+        public class Zone
         {
             public Gradient gradient;
-            public Color tint;
             [Range(0, 1)]
-            public float startHeight;
-            [Range(0, 1)]
-            public float tintPercent;
+            public float startPos;
         }
     }
 }

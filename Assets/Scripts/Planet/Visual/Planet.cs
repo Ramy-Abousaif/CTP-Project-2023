@@ -46,7 +46,7 @@ public class Planet : MonoBehaviour
         if(meshFilters == null || meshFilters.Length == 0)
             meshFilters = new MeshFilter[faceCount];
 
-        faces = new FaceMesh[faceCount];
+        this.faces = new FaceMesh[faceCount];
 
         Vector3[] directions = {Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back};
 
@@ -61,9 +61,9 @@ public class Planet : MonoBehaviour
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].mesh = new Mesh();
             }
-            meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMat;
+            this.meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMat;
 
-            faces[i] = new FaceMesh(shapeGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
+            this.faces[i] = new FaceMesh(shapeGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
         }
     }
 
@@ -77,6 +77,7 @@ public class Planet : MonoBehaviour
         Initialize();
         GenerateMesh();
         GenerateColours();
+        GenerateAtmosphere();
     }
 
     private void GenerateMesh()

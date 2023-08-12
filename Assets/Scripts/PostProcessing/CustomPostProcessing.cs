@@ -16,9 +16,8 @@ public class CustomPostProcessing : MonoBehaviour
     void Init()
     {
         if (defaultShader == null)
-        {
             defaultShader = Shader.Find("Unlit/Texture");
-        }
+
         defaultMat = new Material(defaultShader);
     }
 
@@ -26,9 +25,8 @@ public class CustomPostProcessing : MonoBehaviour
     void OnRenderImage(RenderTexture intialSource, RenderTexture finalDestination)
     {
         if (onPostProcessingBegin != null)
-        {
             onPostProcessingBegin(finalDestination);
-        }
+
         Init();
 
         temporaryTextures.Clear();
@@ -60,9 +58,7 @@ public class CustomPostProcessing : MonoBehaviour
         }
 
         if (currentDestination != finalDestination)
-        {
             Graphics.Blit(currentSource, finalDestination, defaultMat);
-        }
 
         for (int i = 0; i < temporaryTextures.Count; i++)
         {
@@ -70,10 +66,7 @@ public class CustomPostProcessing : MonoBehaviour
         }
 
         if (onPostProcessingComplete != null)
-        {
             onPostProcessingComplete(finalDestination);
-        }
-
     }
 
     public static void RenderMaterials(RenderTexture source, RenderTexture destination, List<Material> materials)
@@ -107,9 +100,7 @@ public class CustomPostProcessing : MonoBehaviour
         }
 
         if (currentDestination != destination)
-        {
             Graphics.Blit(currentSource, destination, new Material(Shader.Find("Unlit/Texture")));
-        }
 
         for (int i = 0; i < temporaryTextures.Count; i++)
         {

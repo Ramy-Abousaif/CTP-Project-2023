@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu()]
-public class CustomEffects : PostProcessingEffect
+public class CustomAtmosphereEffect : PostProcessingEffect
 {
     public Shader atmosphereShader;
 
-    List<EffectHolder> effectHolders;
+    List<AtmosphereEffectContainer> effectHolders;
     List<float> sortDistances;
 
     List<Material> postProcessingMaterials;
@@ -24,20 +24,19 @@ public class CustomEffects : PostProcessingEffect
         if (effectHolders == null || effectHolders.Count == 0 || !Application.isPlaying)
         {
             var planets = FindObjectsOfType<Planet>();
-            effectHolders = new List<EffectHolder>(planets.Length);
+            effectHolders = new List<AtmosphereEffectContainer>(planets.Length);
             for (int i = 0; i < planets.Length; i++)
             {
-                effectHolders.Add(new EffectHolder(planets[i]));
+                effectHolders.Add(new AtmosphereEffectContainer(planets[i]));
             }
         }
+
         if (postProcessingMaterials == null)
-        {
             postProcessingMaterials = new List<Material>();
-        }
+
         if (sortDistances == null)
-        {
             sortDistances = new List<float>();
-        }
+
         sortDistances.Clear();
         postProcessingMaterials.Clear();
     }
@@ -58,7 +57,7 @@ public class CustomEffects : PostProcessingEffect
 
             for (int i = 0; i < effectHolders.Count; i++)
             {
-                EffectHolder effectHolder = effectHolders[i];
+                AtmosphereEffectContainer effectHolder = effectHolders[i];
 
                 if (effectHolder.atmosphereEffect != null)
                 {
@@ -96,12 +95,12 @@ public class CustomEffects : PostProcessingEffect
         }
     }
 
-    public class EffectHolder
+    public class AtmosphereEffectContainer
     {
         public Planet planet;
         public AtmosphereEffect atmosphereEffect;
 
-        public EffectHolder(Planet planet)
+        public AtmosphereEffectContainer(Planet planet)
         {
             this.planet = planet;
             if (planet.atmosphereSettings)
