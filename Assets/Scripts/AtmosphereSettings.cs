@@ -33,12 +33,12 @@ public class AtmosphereSettings : ScriptableObject
             float scatterG = Mathf.Pow(400 / wavelengths.y, 4) * scatterStrength;
             float scatterB = Mathf.Pow(400 / wavelengths.z, 4) * scatterStrength;
 
-            mat.SetInt("numInScatteringPoints", inScatteringPoints);
-            mat.SetInt("numOpticalDepthPoints", opticalDepthPoints);
+            mat.SetInt("inScatterPointCount", inScatteringPoints);
+            mat.SetInt("opticalDepthPointCount", opticalDepthPoints);
             mat.SetFloat("atmosphereRadius", atmosphereRadius);
-            mat.SetVector("scatteringCoefficients", new Vector3(scatterR, scatterG, scatterB));
+            mat.SetVector("coefficientsForScatter", new Vector3(scatterR, scatterG, scatterB));
             mat.SetFloat("planetRadius", _planetRadius);
-            mat.SetFloat("densityFalloff", density);
+            mat.SetFloat("density", density);
 
 
             isUpdated = true;

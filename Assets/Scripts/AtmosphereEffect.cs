@@ -21,12 +21,12 @@ public class AtmosphereEffect
             mat = new Material(shader);
 
         planet.atmosphereSettings.SetProperties(mat, planet.shapeSettings.planetRadius);
-        mat.SetVector("planetCentre", planet.transform.position);
+        mat.SetVector("centre", planet.transform.position);
 
         if (light)
         {
             Vector3 sunDir = (light.transform.position - planet.transform.position).normalized;
-            mat.SetVector("dirToSun", sunDir);
+            mat.SetVector("sunDir", sunDir);
         }
     }
 

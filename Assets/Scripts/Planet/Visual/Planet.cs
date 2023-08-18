@@ -38,7 +38,7 @@ public class Planet : MonoBehaviour
     FaceMesh[] faces;
 
     // Method gets called on initialization and creates the shape generator and the mesh filters
-    private void Initialize()
+    private void Setup()
     {
         shapeGenerator.UpdateShapeSettings(shapeSettings);
         colourGenerator.UpdateColourSettings(colourSettings);
@@ -74,7 +74,7 @@ public class Planet : MonoBehaviour
 
     public void GeneratePlanet()
     {
-        Initialize();
+        Setup();
         GenerateMesh();
         GenerateColours();
         GenerateAtmosphere();
@@ -94,7 +94,7 @@ public class Planet : MonoBehaviour
     {
         if(autoUpdate)
         {
-            Initialize();
+            Setup();
             GenerateMesh();
         }
     }
@@ -103,7 +103,7 @@ public class Planet : MonoBehaviour
     {
         if (autoUpdate)
         {
-            Initialize();
+            Setup();
             GenerateColours();
         }
     }
@@ -112,7 +112,7 @@ public class Planet : MonoBehaviour
     {
         if (autoUpdate)
         {
-            Initialize();
+            Setup();
             GenerateAtmosphere();
         }
     }
@@ -128,6 +128,6 @@ public class Planet : MonoBehaviour
 
     private void GenerateAtmosphere()
     {
-
+        
     }
 }

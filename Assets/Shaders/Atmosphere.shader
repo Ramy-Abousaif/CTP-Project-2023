@@ -6,7 +6,6 @@ Shader "Hidden/Atmosphere"
     }
     SubShader
     {
-        // No culling or depth
         Cull Off ZWrite Off ZTest Always
 
         Pass
@@ -36,69 +35,64 @@ Shader "Hidden/Atmosphere"
                 v2f output;
                 output.pos = UnityObjectToClipPos(v.vertex);
                 output.uv = v.uv;
-                float3 viewVector = mul(unity_CameraInvProjection, float4(v.uv.xy * 2 - 1, 0, -1));
-                output.viewVector = mul(unity_CameraToWorld, float4(viewVector, 0));
+                float3 view = mul(unity_CameraInvProjection, float4(v.uv.xy * 2 - 1, 0, -1));
+                output.viewVector = mul(unity_CameraToWorld, float4(view, 0));
                 return output;
             }
 
             sampler2D _MainTex;
             sampler2D _CameraDepthTexture;
 
-            // Fed in data
-            float3 dirToSun;
-            float3 planetCentre;
-            float atmosphereRadius;
+            float4 coefficientsForScatter;
+            float density;
+            int inScatterPointCount;
+            int opticalDepthPointCount;
+
+            float3 sunDir;
             float planetRadius;
+            float3 centre;
+            float atmosphereRadius;
 
-            // Exposed properties
-            int numInScatteringPoints;
-            int numOpticalDepthPoints;
-            float4 scatteringCoefficients;
-            float densityFalloff;
-
-            float densityAtPoint(float3 densitySamplePoint) 
+            float DensityAtGivenPoint(float3 samplePoint) 
             {
-                float heightAboveSurface = length(densitySamplePoint - planetCentre) - planetRadius;
-                float height01 = heightAboveSurface / (atmosphereRadius - planetRadius);
-                float localDensity = exp(-height01 * densityFalloff) * (1 - height01);
-                return localDensity;
+                float heightFromSurface = length(samplePoint - centre) - planetRadius;
+                float normalizedHeight = heightFromSurface / (atmosphereRadius - planetRadius);
+                return exp(-normalizedHeight * density) * (1 - normalizedHeight);
             }
 
-            float opticalDepth(float3 rayOrigin, float3 rayDir, float rayLength) 
+            float OpticalDepth(float3 rayOrigin, float3 rayDir, float rayLength) 
             {
-                float3 densitySamplePoint = rayOrigin;
-                float stepSize = rayLength / (numOpticalDepthPoints - 1);
-                float opticalDepth = 0;
+                float3 samplePoint = rayOrigin;
+                float stepLength = rayLength / (opticalDepthPointCount - 1);
+                float depth = 0;
 
-                for (int i = 0; i < numOpticalDepthPoints; i++) 
+                for (int i = 0; i < opticalDepthPointCount; i++)
                 {
-                    float localDensity = densityAtPoint(densitySamplePoint);
-                    opticalDepth += localDensity * stepSize;
-                    densitySamplePoint += rayDir * stepSize;
+                    depth += DensityAtGivenPoint(samplePoint) * stepLength;
+                    samplePoint += rayDir * stepLength;
                 }
-                return opticalDepth;
+
+                return depth;
             }
 
-            float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength, float3 originalCol) 
+            float3 CustomLight(float3 rayOrigin, float3 rayDir, float rayLength, float3 originalCol) 
             {
-                float3 inScatterPoint = rayOrigin;
-                float stepSize = rayLength / (numInScatteringPoints - 1);
                 float3 inScatteredLight = 0;
                 float viewRayOpticalDepth = 0;
+                float stepLength = rayLength / (inScatterPointCount - 1);
+                float3 inScatterPoint = rayOrigin;
 
-                for (int i = 0; i < numInScatteringPoints; i++) 
+                for (int i = 0; i < inScatterPointCount; i++)
                 {
-                    float sunRayLength = raySphere(planetCentre, atmosphereRadius, inScatterPoint, dirToSun).y;
-                    float sunRayOpticalDepth = opticalDepth(inScatterPoint, dirToSun, sunRayLength);
-                    viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
-                    float3 transmittance = exp(-(sunRayOpticalDepth + viewRayOpticalDepth) * scatteringCoefficients);
-                    float localDensity = densityAtPoint(inScatterPoint);
+                    viewRayOpticalDepth = OpticalDepth(inScatterPoint, -rayDir, i * stepLength);
+                    float sunRayLength = raySphere(centre, atmosphereRadius, inScatterPoint, sunDir).y;
+                    float sunRayOpticalDepth = OpticalDepth(inScatterPoint, sunDir, sunRayLength);
+                    float3 transmittance = exp(coefficientsForScatter * -(viewRayOpticalDepth + sunRayOpticalDepth));
 
-                    inScatteredLight += localDensity * transmittance * scatteringCoefficients * stepSize;
-                    inScatterPoint += rayDir * stepSize;
+                    inScatteredLight += DensityAtGivenPoint(inScatterPoint) * transmittance * coefficientsForScatter * stepLength;
+                    inScatterPoint += rayDir * stepLength;
                 }
-                float originalColTransmittance = exp(-viewRayOpticalDepth);
-                return originalCol * originalColTransmittance + inScatteredLight;
+                return originalCol * exp(-viewRayOpticalDepth) + inScatteredLight;
             }
 
             fixed4 frag (v2f i) : SV_Target
@@ -106,19 +100,17 @@ Shader "Hidden/Atmosphere"
                 float4 originalCol = tex2D(_MainTex, i.uv);
                 float sceneDepthNonLinear = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                 float sceneDepth = LinearEyeDepth(sceneDepthNonLinear) * length(i.viewVector);
-
                 float3 rayOrigin = _WorldSpaceCameraPos;
                 float3 rayDir = normalize(i.viewVector);
+                float2 hitInfo = raySphere(centre, atmosphereRadius, rayOrigin, rayDir);
+                float distToAtmosphere = hitInfo.x;
+                float distThroughAtmosphere = min(hitInfo.y, sceneDepth - distToAtmosphere);
 
-                float2 hitInfo = raySphere(planetCentre, atmosphereRadius, rayOrigin, rayDir);
-                float dstToAtmosphere = hitInfo.x;
-                float dstThroughAtmosphere = min(hitInfo.y, sceneDepth - dstToAtmosphere);
-
-                if (dstThroughAtmosphere > 0) {
-                    const float epsilon = 0.0001;
-                    float3 pointInAtmosphere = rayOrigin + rayDir * (dstToAtmosphere + epsilon);
-                    float3 light = calculateLight(pointInAtmosphere, rayDir, dstThroughAtmosphere - epsilon * 2, originalCol);
-                    return float4(light, 0);
+                if (distThroughAtmosphere > 0)
+                {
+                    float3 atmosphericPoint = rayOrigin + rayDir * (distToAtmosphere + 0.0001);
+                    float3 calculatedLight = CustomLight(atmosphericPoint, rayDir, distThroughAtmosphere - 0.0002, originalCol);
+                    return float4(calculatedLight, 0);
                 }
 
                 return originalCol;

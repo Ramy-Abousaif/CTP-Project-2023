@@ -20,7 +20,7 @@ public class PlanetEditor : Editor
                 planet.GeneratePlanet();
         }
 
-        if(GUILayout.Button("Generate Planet"))
+        if(GUILayout.Button("Manually Force Planet Update"))
             planet.GeneratePlanet();
 
         DrawSettingsEditor(planet.shapeSettings, planet.OnShapeSettingsChange, ref planet.shapeSettingsFoldout, ref shapeEditor);
@@ -45,9 +45,7 @@ public class PlanetEditor : Editor
                 if (check.changed)
                 {
                     if (onSettingsChanged != null)
-                    {
                         onSettingsChanged();
-                    }
                 }
             }
         }
