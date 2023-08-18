@@ -74,6 +74,12 @@ public class Planet : MonoBehaviour
 
     public void GeneratePlanet()
     {
+        if(shapeSettings == null || colourSettings == null || atmosphereSettings == null)
+        {
+            Debug.LogWarning("Planet settings not set correctly, missing a setting");
+            return;
+        }
+
         Setup();
         GenerateMesh();
         GenerateColours();
