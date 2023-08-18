@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f90b4039fccc9341811b4d8bb02eec9, type: 3}
-  m_Name: T6Shape
+  m_Name: MarsShape
   m_EditorClassIdentifier: 
-  planetRadius: 22
+  planetRadius: 1
   noiseLayers:
   - enabled: 1
     useFirstLayerAsMask: 0
     noiseSettings:
       filterType: 0
       simpleNoiseSettings:
-        strength: 0.005
-        layers: 8
-        baseRoughness: 1e+9
-        roughness: 0
-        persistence: 0
+        strength: 0.07
+        layers: 4
+        baseRoughness: 1.01
+        roughness: 2.69
+        persistence: 0.5
         centre: {x: 1.11, y: 0.92, z: -0.39}
-        minValue: 0.29
+        minValue: 0.98
       rigidNoiseSettings:
         strength: 1
         layers: 1
@@ -40,19 +40,19 @@ MonoBehaviour:
     noiseSettings:
       filterType: 1
       simpleNoiseSettings:
-        strength: 0.03
-        layers: 8
-        baseRoughness: 5555
-        roughness: 2.28
+        strength: 1
+        layers: 1
+        baseRoughness: 1
+        roughness: 2
         persistence: 0.5
-        centre: {x: 1.11, y: 0.92, z: -0.39}
-        minValue: 0.81
-      rigidNoiseSettings:
-        strength: 0.3
-        layers: 5
-        baseRoughness: 2.92
-        roughness: 0.83
-        persistence: 3
         centre: {x: 0, y: 0, z: 0}
-        minValue: 0.5
-        weightMultiplier: 1
+        minValue: 0
+      rigidNoiseSettings:
+        strength: 0.75
+        layers: 4
+        baseRoughness: 1.87
+        roughness: 3.3
+        persistence: 0.63
+        centre: {x: 0, y: 0, z: 0}
+        minValue: 0.37
+        weightMultiplier: 0.77

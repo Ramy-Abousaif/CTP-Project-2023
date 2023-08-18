@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f90b4039fccc9341811b4d8bb02eec9, type: 3}
-  m_Name: T7Shape
+  m_Name: UranusShape
   m_EditorClassIdentifier: 
-  planetRadius: 20
+  planetRadius: 8
   noiseLayers:
   - enabled: 1
     useFirstLayerAsMask: 0
@@ -24,8 +24,8 @@ MonoBehaviour:
         baseRoughness: 1e+9
         roughness: 0
         persistence: 0
-        centre: {x: 0, y: 0, z: 0}
-        minValue: 0.387
+        centre: {x: 1.11, y: 0.92, z: -0.39}
+        minValue: 0.29
       rigidNoiseSettings:
         strength: 1
         layers: 1
@@ -35,3 +35,24 @@ MonoBehaviour:
         centre: {x: 0, y: 0, z: 0}
         minValue: 0
         weightMultiplier: 0.8
+  - enabled: 1
+    useFirstLayerAsMask: 1
+    noiseSettings:
+      filterType: 1
+      simpleNoiseSettings:
+        strength: 0.03
+        layers: 8
+        baseRoughness: 5555
+        roughness: 2.28
+        persistence: 0.5
+        centre: {x: 1.11, y: 0.92, z: -0.39}
+        minValue: 0.81
+      rigidNoiseSettings:
+        strength: 0.1
+        layers: 4
+        baseRoughness: 555555
+        roughness: 0.83
+        persistence: 3
+        centre: {x: 0, y: 1.82, z: 0}
+        minValue: 0.5
+        weightMultiplier: 1

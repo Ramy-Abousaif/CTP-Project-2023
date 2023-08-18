@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f90b4039fccc9341811b4d8bb02eec9, type: 3}
-  m_Name: T9Shape
+  m_Name: NeptuneShape
   m_EditorClassIdentifier: 
   planetRadius: 8
   noiseLayers:

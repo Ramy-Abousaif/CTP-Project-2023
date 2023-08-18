@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada1c27bf275ec84c8289bf5a764e8f8, type: 3}
-  m_Name: T7Atmosphere
+  m_Name: JupiterAtmosphere
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: 257ed6311f6a5f94cba4d75798730391, type: 3}
-  scale: 0.2
-  density: 15.3
+  scale: 0.205
+  density: 18
   opticalDepthPoints: 10
   inScatteringPoints: 10
-  wavelengths: {x: 555, y: 555, z: 728.7}
-  scatterStrength: 10
+  wavelengths: {x: 700, y: 494, z: 531.3}
+  scatterStrength: 3.01

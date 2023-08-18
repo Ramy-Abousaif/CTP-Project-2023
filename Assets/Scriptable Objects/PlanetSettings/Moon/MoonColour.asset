@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1a903f5e9e5b884baf5bded752a4998, type: 3}
-  m_Name: T2Colour
+  m_Name: MoonColour
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: ffefeccd26bf24542b96969dfb0b3d9e, type: 3}
   exposeMat: 0

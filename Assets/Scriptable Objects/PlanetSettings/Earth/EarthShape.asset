@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3f90b4039fccc9341811b4d8bb02eec9, type: 3}
-  m_Name: T5Shape
+  m_Name: EarthShape
   m_EditorClassIdentifier: 
-  planetRadius: 1
+  planetRadius: 2
   noiseLayers:
   - enabled: 1
     useFirstLayerAsMask: 0
@@ -48,11 +48,11 @@ MonoBehaviour:
         centre: {x: 0, y: 0, z: 0}
         minValue: 0
       rigidNoiseSettings:
-        strength: 0.75
+        strength: 1.42
         layers: 4
-        baseRoughness: 1.87
+        baseRoughness: 1.59
         roughness: 3.3
-        persistence: 0.63
+        persistence: 0.5
         centre: {x: 0, y: 0, z: 0}
         minValue: 0.37
-        weightMultiplier: 0.77
+        weightMultiplier: 0.78
