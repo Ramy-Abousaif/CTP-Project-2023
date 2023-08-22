@@ -57,7 +57,7 @@ Shader "Hidden/Atmosphere"
             {
                 float heightFromSurface = length(samplePoint - centre) - planetRadius;
                 float normalizedHeight = heightFromSurface / (atmosphereRadius - planetRadius);
-                return exp(-normalizedHeight * density) * (1 - normalizedHeight);
+                return (1 - normalizedHeight) * exp(density * -normalizedHeight);
             }
 
             float OpticalDepth(float3 rayOrigin, float3 rayDir, float rayLength) 
